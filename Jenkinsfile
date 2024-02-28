@@ -11,7 +11,7 @@ pipeline {
       parallel {
         stage('proxy') {
           steps {
-            sh 'docker build -t proxy ./proxy'
+            sh 'docker compose up -d'
           }
         }
 
@@ -21,31 +21,19 @@ pipeline {
           }
         }
 
-        stage('flask') {
-          steps {
-            sh 'docker build -t backend ./backend'
-          }
-        }
-
       }
-    }
-
-    stage('test images') {
-      steps {
-        sh 'docker images'
-      }
-    }
-
-    stage('deploy') {
-      steps {
-        sh 'docker compose up -d'
-      }
-    }
+    }   
 
     stage('test ps') {
       steps {
-        sh 'docker ps'
+        sh 'docker compose ps'
         sh 'curl http://localhost:80'
+      }
+    }
+    
+    stage('clean') {
+      steps {
+        sh 'docker compose down'
       }
     }
 
